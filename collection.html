@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATELIER · FW24 Collection</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Montserrat:wght@200;300;400;500;600&display=swap');
+
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4af37;
+            --text: #ffffff;
+            --font-display: "Italiana", serif;
+            --font-body: "Montserrat", sans-serif;
+            --ease: cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .collection-header {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 2rem;
+            color:  rgb(201, 168, 122);
+        }
+
+        .collection-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 15vw, 12rem);
+            line-height: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .collection-subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0;
+        }
+
+        .scroll-gallery {
+            height: 100vh;
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .gallery-item {
+            flex: 0 0 60vw;
+            height: 80vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.1);
+            transition: transform 0.8s var(--ease);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1);
+        }
+
+        .item-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            transform: translateY(100%);
+            transition: transform 0.6s var(--ease);
+        }
+
+        .gallery-item:hover .item-info {
+            transform: translateY(0);
+        }
+
+        .item-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-desc {
+            font-size: 0.9rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .item-price {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .collection-details {
+            padding: 10rem 5%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .details-content {
+            padding-right: 2rem;
+        }
+
+        .details-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .details-text {
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .details-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .details-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .details-list li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            margin-right: 1rem;
+        }
+
+        .details-image {
+            width: 100%;
+            height: 80vh;
+            object-fit: cover;
+        }
+
+        .lookbook {
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .lookbook-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .lookbook-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .lookbook-item {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .lookbook-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s var(--ease);
+        }
+
+        .lookbook-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            transition: all 0.4s var(--ease);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.4s var(--ease);
+            z-index: -1;
+        }
+
+        .cta-button:hover {
+            color: var(--primary);
+        }
+
+        .cta-button:hover::before {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .collection-details {
+                grid-template-columns: 1fr;
+                padding: 5rem 5%;
+            }
+
+            .gallery-item {
+                flex: 0 0 90vw;
+                height: 60vh;
+            }
+
+            .details-content {
+                padding-right: 0;
+            }
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-decoration: none;
+            color: var(--text);
+            text-transform: uppercase;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.6s var(--ease);
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">ATELIER</div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">Home</a>
+            <button class="menu-button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    <header class="collection-header">
+        <video class="header-bg" autoplay loop muted playsinline>
+            <source src="Untitled video - Made with Clipchamp.mp4" type="video/mp4">
+        </video>
+        <div class="header-content">
+            <h1 class="collection-title">FW24<br>Collection</h1>
+            <p class="collection-subtitle">A bold exploration of contemporary aesthetics, where architectural design meets street culture. Each piece is a statement of modern luxury.</p>
+        </div>
+    </header>
+
+    <section class="scroll-gallery">
+        <article class="gallery-item">
+            <img src="pexels-alipazani-4668739.jpg" alt="Avant-garde Jacket">
+            <div class="item-info">
+                <h3 class="item-title">Deconstructed Parka</h3>
+                <p class="item-desc">Technical fabric with architectural details and asymmetric design elements.</p>
+                <p class="item-price">$1,295</p>
+            </div>
+        </article>
+        <article class="gallery-item">
+            <img src="pexels-griffinw-2657961.jpg" alt="Designer Hoodie">
+            <div class="item-info">
+                <h3 class="item-title">Sculptural Hoodie</h3>
+                <p class="item-desc">Premium cotton blend with innovative cut and drape techniques.</p>
+                <p class="item-price">$695</p>
+            </div>
+        </article>
+        <article class="gallery-item">
+            <img src="pexels-mike-jones-9461650.jpg" alt="Cargo Pants">
+            <div class="item-info">
+                <h3 class="item-title">Utility Cargo</h3>
+                <p class="item-desc">Technical fabric with modular pocket system and tapered fit.</p>
+                <p class="item-price">$895</p>
+            </div>
+        </article>
+        <article class="gallery-item">
+            <img src="pexels-sebastiaan9977-1311590.jpg" alt="Designer T-shirt">
+            <div class="item-info">
+                <h3 class="item-title">Graphic Print Tee</h3>
+                <p class="item-desc">Organic cotton with avant-garde print and relaxed cut.</p>
+                <p class="item-price">$245</p>
+            </div>
+        </article>
+    </section>
+
+    <section class="collection-details">
+        <div class="details-content">
+            <h2 class="details-title">Design Philosophy</h2>
+            <p class="details-text">Our FW24 collection represents a convergence of architectural precision and street culture, creating pieces that challenge traditional fashion boundaries while maintaining supreme wearability.</p>
+            <ul class="details-list">
+                <li>Innovative pattern cutting techniques</li>
+                <li>Premium sustainable materials</li>
+                <li>Architectural design elements</li>
+                <li>Limited production runs</li>
+                <li>Handcrafted details</li>
+            </ul>
+            <a href="#" class="cta-button">Explore Collection</a>
+        </div>
+        <img src="pexels-hannah-bueno-2029747251-29107942.jpg" alt="Design Process" class="details-image">
+    </section>
+
+    <section class="lookbook">
+        <h2 class="lookbook-title">FW24 Lookbook</h2>
+        <div class="lookbook-grid">
+            <div class="lookbook-item">
+                <img src="pexels-cottonbro-6626903.jpg" alt="Lookbook 1">
+            </div>
+            <div class="lookbook-item">
+                <img src="pexels-matheus-cardoso-922575-2860827.jpg" alt="Lookbook 2">
+            </div>
+            <div class="lookbook-item">
+                <img src="pexels-marlonretratos-26936525.jpg" alt="Lookbook 3">
+            </div>
+            <div class="lookbook-item">
+                <img src="pexels-cottonbro-6764707.jpg" alt="Lookbook 4">
+            </div>
+        </div>
+        <a href="#" class="cta-button">View Full Lookbook</a>
+    </section>
+
+    <script>
+        // Initialize GSAP
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // Header Animations
+        gsap.from('.collection-title', {
+            y: 100,
+            opacity: 0,
+            duration: 1.5,
+            ease: 'power4.out'
+        });
+
+        gsap.to('.collection-subtitle', {
+            opacity: 1,
+            duration: 1,
+            delay: 0.5,
+            ease: 'power3.out'
+        });
+
+        // Horizontal Scroll Gallery
+        const scrollGallery = document.querySelector('.scroll-gallery');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        let galleryWidth = 0;
+        galleryItems.forEach(item => {
+            galleryWidth += item.offsetWidth;
+        });
+
+        gsap.to('.scroll-gallery', {
+            x: -(galleryWidth - window.innerWidth + 32),
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '.scroll-gallery',
+                start: 'top top',
+                end: `+=${galleryWidth}`,
+                pin: true,
+                scrub: 1
+            }
+        });
+
+        // Collection Details Animation
+        gsap.from('.details-content', {
+            x: -100,
+            opacity: 0,
+            duration: 1,
+            scrollTrigger: {
+                trigger: '.collection-details',
+                start: 'top center',
+                end: 'bottom center',
+                scrub: 1
+            }
+        });
+
+        gsap.from('.details-image', {
+            x: 100,
+            opacity: 0,
+            duration: 1,
+            scrollTrigger: {
+                trigger: '.collection-details',
+                start: 'top center',
+                end: 'bottom center',
+                scrub: 1
+            }
+        });
+
+        // Lookbook Grid Animation
+        const lookbookItems = document.querySelectorAll('.lookbook-item');
+
+        lookbookItems.forEach((item, index) => {
+            gsap.from(item, {
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                delay: index * 0.2,
+                scrollTrigger: {
+                    trigger: '.lookbook-grid',
+                    start: 'top center'
+                }
+            });
+        });
+
+        // Magnetic Button Effect
+        const buttons = document.querySelectorAll('.cta-button');
+
+        buttons.forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                gsap.to(button, {
+                    duration: 0.3,
+                    x: x * 0.1,
+                    y: y * 0.1,
+                    rotation: x * 0.01,
+                    ease: 'power2.out'
+                });
+            });
+
+            button.addEventListener('mouseleave', () => {
+                gsap.to(button, {
+                    duration: 0.3,
+                    x: 0,
+                    y: 0,
+                    rotation: 0,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        // Smooth Scroll
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+
+        // Parallax Effect for Header
+        gsap.to('.header-bg', {
+            yPercent: 50,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '.collection-header',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            }
+        });
+
+        // Image Hover Effects
+        const hoverEffect = {
+            parent: document.querySelectorAll('.gallery-item, .lookbook-item'),
+            intensity: 0.2,
+            speedIn: 1.2,
+            speedOut: 1.2
+        };
+
+        hoverEffect.parent.forEach(parent => {
+            const image = parent.querySelector('img');
+
+            parent.addEventListener('mouseenter', (e) => {
+                gsap.to(image, {
+                    duration: hoverEffect.speedIn,
+                    scale: 1 + hoverEffect.intensity,
+                    ease: 'power2.out'
+                });
+            });
+
+            parent.addEventListener('mouseleave', (e) => {
+                gsap.to(image, {
+                    duration: hoverEffect.speedOut,
+                    scale: 1,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        // Split Text Animation for Titles
+        const titles = document.querySelectorAll('.collection-title, .details-title, .lookbook-title');
+        
+        titles.forEach(title => {
+            const chars = title.textContent.split('');
+            title.textContent = '';
+            
+            chars.forEach((char, i) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.style.opacity = '0';
+                span.style.transform = 'translateY(50px)';
+                span.style.display = 'inline-block';
+                title.appendChild(span);
+                
+                gsap.to(span, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    delay: i * 0.05,
+                    ease: 'power4.out',
+                    scrollTrigger: {
+                        trigger: title,
+                        start: 'top center+=100'
+                    }
+                });
+            });
+        });
+
+        // Custom Cursor
+        const cursor = document.createElement('div');
+        cursor.classList.add('custom-cursor');
+        document.body.appendChild(cursor);
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .custom-cursor {
+                width: 20px;
+                height: 20px;
+                border: 2px solid var(--accent);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate(-50%, -50%);
+                transition: width 0.3s, height 0.3s, background-color 0.3s;
+                mix-blend-mode: difference;
+            }
+            .cursor-hover {
+                width: 60px;
+                height: 60px;
+                background-color: var(--accent);
+                mix-blend-mode: difference;
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1
+            });
+        });
+
+        const cursorTargets = document.querySelectorAll('a, button, .gallery-item, .lookbook-item');
+        cursorTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+            target.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+        });
+
+        // Intersection Observer for Fade In
+        const fadeElements = document.querySelectorAll('.item-info, .details-text, .details-list li');
+        
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    gsap.to(entry.target, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: 'power3.out'
+                    });
+                    fadeInObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.2
+        });
+
+        fadeElements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            fadeInObserver.observe(element);
+        });
+
+        // Dynamic Background Color
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+            ScrollTrigger.create({
+                trigger: section,
+                start: 'top center',
+                onEnter: () => {
+                    gsap.to('body', {
+                        backgroundColor: section.dataset.bgColor || 'var(--primary)',
+                        duration: 1
+                    });
+                },
+                onLeaveBack: () => {
+                    gsap.to('body', {
+                        backgroundColor: 'var(--primary)',
+                        duration: 1
+                    });
+                }
+            });
+        });
+
+        // Preloader
+        window.addEventListener('load', () => {
+            const preloader = document.querySelector('.loader');
+            gsap.to(preloader, {
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.inOut',
+                onComplete: () => preloader.remove()
+            });
+        });
+    </script>
+</body>
+</html>
